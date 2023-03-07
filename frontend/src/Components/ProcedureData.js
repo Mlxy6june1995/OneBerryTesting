@@ -208,7 +208,7 @@ class ProcedureData extends Component
   {
     try
     {
-      let res = await axios.post("http://localhost:3001/savingCustomizedData", {procedureData: this.state.procedure});
+      let res = await axios.post("http://13.215.200.30:3001/savingCustomizedData", {procedureData: this.state.procedure});
       let data = await res.data;
       console.log(data);
       window.location.reload(false);
