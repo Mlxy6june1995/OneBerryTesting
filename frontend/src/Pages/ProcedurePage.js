@@ -45,7 +45,7 @@ class ProcedurePage extends Component
   {
     try
     {
-      let res = await axios.post("http://54.179.144.194:3001/retrieveProcedureData", {upload: file});
+      let res = await axios.post("http://13.250.105.222:3001/retrieveProcedureData", {upload: file});
       let data = await res.data;
       if(data != [])
       {
