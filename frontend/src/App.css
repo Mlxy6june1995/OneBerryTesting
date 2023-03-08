@@ -42,7 +42,6 @@
   }
 }
 
-/*All Pages*/
 body
 {
   background-color: #000000;
@@ -58,3 +57,13 @@ b
 {
   color: #ffffff;
 }
+
+#chosenCriteria
+{
+  color: #ffffff;
+  background-color: #000000;
+  border: none;
+  font-weight: bold;
+  font-size: medium;
+}
+

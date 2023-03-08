@@ -33,7 +33,14 @@ class ProcedurePage extends Component
     {
         e.preventDefault();
         var uploadFile = document.getElementById("myFile").files[0].name;
-        await this.retrieveProcedureData(uploadFile);
+        if(uploadFile.split(".")[1] === "csv")
+        {
+          await this.retrieveProcedureData(uploadFile);
+        }
+        else
+        {
+          alert("The file that contains the data is in csv file.");
+        }
     }
     catch(e)
     {
@@ -45,16 +52,16 @@ class ProcedurePage extends Component
   {
     try
     {
-      let res = await axios.post("http://13.215.200.30:3001/retrieveProcedureData", {upload: file});
+      let res = await axios.post("http://localhost:3001/retrieveProcedureData", {upload: file});
       let data = await res.data;
       if(data != [])
       {
         this.setState({procedureData:data});
-        console.log("Upload successfully");
+        alert("Upload successfully");
       }
       else
       {
-        console.log("Upload not successfully");
+        alert("Upload not successfully");
       }
     }
     catch(e)
@@ -67,149 +74,154 @@ class ProcedurePage extends Component
 
   setData = async(value) =>
   {
-    this.setState({graphData: value})
-    //this.gettingData(value);
+    this.setState({graphData: value});
   }
   
   async collectingData(e)
   {  
     var selectedView = document.getElementById("viewing").value;
     var procedure_data = this.state.graphData;    
-
-    if(selectedView === "noOfProject")
-    {      
-      var temp = [];
-      var noOfProject = [];     
-        for(var i = 0; i < procedure_data.length; i++)
-        {
-          if(temp.indexOf(procedure_data[i].agency) === -1)
-          {
-            temp.push(procedure_data[i].agency);
-            var data = {};
-            data.label = procedure_data[i].agency;
-            data.y = 1;
-            noOfProject.push(data);
-          } 
-          else
-          {
-            for(var j = 0; j < noOfProject.length; j++)
-            {
-              if(noOfProject[j].label === procedure_data[i].agency)
-              {
-                var total = 1 + noOfProject[j].y;
-                noOfProject[j].y = total;
-              }
-            }
-          }
-        } 
-        this.setState({collectedData: noOfProject});
-        this.setState({xAxis: "Agency"});
-        this.setState({yAxis: "No of project"});
-        this.setState({title: "No. of project from each agency"});
-        this.setState({type: "column"});
-    }
-    else if(selectedView === "totalAwardAmt")
+    if(procedure_data.length > 0)
     {
-      var result = {};
-
-      procedure_data.forEach(function(d) 
-      {
-        if (result.hasOwnProperty(d.agency)) 
-        {
-          result[d.agency] = result[d.agency] + parseInt(d.awarded_amt);
-        } 
-        else 
-        {
-          result[d.agency] = parseInt(d.awarded_amt);
-        }
-      });
-
-      var data = [];
-      for (var prop in result) 
-      {
-        data.push({label: prop, y: result[prop] });
-      }
-
-      this.setState({collectedData: data});
-      this.setState({xAxis: "Agency"});
-      this.setState({yAxis: "Total Awarded Amt"});
-      this.setState({title: "Total Awarded Amt from Each Agency"});
-      this.setState({type: "column"});
-    }
-    if(selectedView === "noOfProjectLine")
-    {      
-      var temp = [];
-      var noOfProject = [];     
-        for(var i = 0; i < procedure_data.length; i++)
-        {
-          if(temp.indexOf(procedure_data[i].award_date) === -1)
+      if(selectedView === "noOfProject")
+      {      
+        var temp = [];
+        var noOfProject = [];     
+          for(var i = 0; i < procedure_data.length; i++)
           {
-            temp.push(procedure_data[i].award_date);
-            var data = {};
-            data.label = procedure_data[i].award_date;
-            data.y = 1;
-            noOfProject.push(data);
-          } 
-          else
-          {
-            for(var j = 0; j < noOfProject.length; j++)
+            if(temp.indexOf(procedure_data[i].agency) === -1)
             {
-              if(noOfProject[j].label === procedure_data[i].award_date)
+              temp.push(procedure_data[i].agency);
+              var data = {};
+              data.label = procedure_data[i].agency;
+              data.y = 1;
+              noOfProject.push(data);
+            } 
+            else
+            {
+              for(var j = 0; j < noOfProject.length; j++)
               {
-                var total = 1 + noOfProject[j].y;
-                noOfProject[j].y = total;
+                if(noOfProject[j].label === procedure_data[i].agency)
+                {
+                  var total = 1 + noOfProject[j].y;
+                  noOfProject[j].y = total;
+                }
               }
             }
-          }
-        } 
+          } 
+          this.setState({collectedData: noOfProject});
+          this.setState({xAxis: "Agency"});
+          this.setState({yAxis: "No of project"});
+          this.setState({title: "No. of project from each agency"});
+          this.setState({type: "column"});
+      }
+      else if(selectedView === "totalAwardAmt")
+      {
+        var result = {};
 
-        var sort_data = noOfProject.sort((a, b) => 
+        procedure_data.forEach(function(d) 
         {
-          a = a["label"].split('/');
-          b = b["label"].split('/');
-          return a[2] - b[2] || a[1] - b[1] || a[0] - b[0];
-        })
+          if (result.hasOwnProperty(d.agency)) 
+          {
+            result[d.agency] = result[d.agency] + parseInt(d.awarded_amt);
+          } 
+          else 
+          {
+            result[d.agency] = parseInt(d.awarded_amt);
+          }
+        });
+
+        var data = [];
+        for (var prop in result) 
+        {
+          data.push({label: prop, y: result[prop] });
+        }
+
+        this.setState({collectedData: data});
+        this.setState({xAxis: "Agency"});
+        this.setState({yAxis: "Total Awarded Amt"});
+        this.setState({title: "Total Awarded Amt from Each Agency"});
+        this.setState({type: "column"});
+      }
+      if(selectedView === "noOfProjectLine")
+      {      
+        var temp = [];
+        var noOfProject = [];     
+          for(var i = 0; i < procedure_data.length; i++)
+          {
+            if(temp.indexOf(procedure_data[i].award_date) === -1)
+            {
+              temp.push(procedure_data[i].award_date);
+              var data = {};
+              data.label = procedure_data[i].award_date;
+              data.y = 1;
+              noOfProject.push(data);
+            } 
+            else
+            {
+              for(var j = 0; j < noOfProject.length; j++)
+              {
+                if(noOfProject[j].label === procedure_data[i].award_date)
+                {
+                  var total = 1 + noOfProject[j].y;
+                  noOfProject[j].y = total;
+                }
+              }
+            }
+          } 
+
+          var sort_data = noOfProject.sort((a, b) => 
+          {
+            a = a["label"].split('/');
+            b = b["label"].split('/');
+            return a[2] - b[2] || a[1] - b[1] || a[0] - b[0];
+          })
+
+          this.setState({collectedData: sort_data});
+          this.setState({xAxis: "Date"});
+          this.setState({yAxis: "No of project"});
+          this.setState({title: "No. of project from Each Date"});
+          this.setState({type: "line"});
+      }
+      else if(selectedView === "totalAwardAmtLine")
+      {
+        var result = {};
+
+        procedure_data.forEach(function(d) 
+        {
+          if (result.hasOwnProperty(d.award_date)) 
+          {
+            result[d.award_date] = result[d.award_date] + parseInt(d.awarded_amt);
+          } 
+          else 
+          {
+            result[d.award_date] = parseInt(d.awarded_amt);
+          }
+        });
+
+        var data = [];
+        for (var prop in result) 
+        {
+          data.push({label: prop, y: result[prop] });
+        }
+
+        var sort_data = data.sort((a, b) => 
+          {
+            a = a["label"].split('/');
+            b = b["label"].split('/');
+            return a[2] - b[2] || a[1] - b[1] || a[0] - b[0];
+          })
 
         this.setState({collectedData: sort_data});
         this.setState({xAxis: "Date"});
-        this.setState({yAxis: "No of project"});
-        this.setState({title: "No. of project from Each Date"});
+        this.setState({yAxis: "Total Awarded Amt"});
+        this.setState({title: "Total Awarded Amt from Each Date"});
         this.setState({type: "line"});
-    }
-    else if(selectedView === "totalAwardAmtLine")
-    {
-      var result = {};
-
-      procedure_data.forEach(function(d) 
-      {
-        if (result.hasOwnProperty(d.award_date)) 
-        {
-          result[d.award_date] = result[d.award_date] + parseInt(d.awarded_amt);
-        } 
-        else 
-        {
-          result[d.award_date] = parseInt(d.awarded_amt);
-        }
-      });
-
-      var data = [];
-      for (var prop in result) 
-      {
-        data.push({label: prop, y: result[prop] });
       }
-
-      var sort_data = data.sort((a, b) => 
-        {
-          a = a["label"].split('/');
-          b = b["label"].split('/');
-          return a[2] - b[2] || a[1] - b[1] || a[0] - b[0];
-        })
-
-      this.setState({collectedData: sort_data});
-      this.setState({xAxis: "Date"});
-      this.setState({yAxis: "Total Awarded Amt"});
-      this.setState({title: "Total Awarded Amt from Each Date"});
-      this.setState({type: "line"});
+    }
+    else
+    {
+      alert("There is no data being passed to the graph.");
     }
   }
 

@@ -19,7 +19,6 @@ async function retrieveProcedureData(fileName)
 
 router.post("/", function(req, res)
 {
-    console.log("Hello");
     try
     {
         retrieveProcedureData(req.body.upload).then(result =>

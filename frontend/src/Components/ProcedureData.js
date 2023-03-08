@@ -59,8 +59,6 @@ class ProcedureData extends Component
 
   async onDateRange()
   {
-    var procedureDateWithin = this.state.procedure;
-
     var start = document.getElementById("startDate").value;
     var startSplit = start.split("-");
     var startDay = parseInt(startSplit[2]);
@@ -71,22 +69,51 @@ class ProcedureData extends Component
     var endDay = parseInt(endSplit[2]);
     var endMonth = parseInt(endSplit[1]);
 
+    if(startMonth > endMonth)
+    {
+      alert("Please choose the right date range.");
+    }
+    else if(startMonth === endMonth)
+    {
+      if(startDay > endDay)
+      {
+        alert("Please choose the right date range.");
+      }
+      else
+      {
+        this.searchDateRange(startDay, startMonth, endDay, endMonth);
+      }
+    }
+    else
+    {
+      if(startDay > endDay)
+      {
+        alert("Please choose the right date range.");
+      }
+      else
+      {
+       this.searchDateRange(startDay, startMonth, endDay, endMonth);
+      }
+    }
+  }
+
+  async searchDateRange(startDay, startMonth, endDay, endMonth)
+  {
+    var procedureDateWithin = this.state.procedure;
     var temp = [];
     var withinDateRange = [];
-
     for(var i = 0; i < procedureDateWithin.length; i++)
     {
       var monthEntry = procedureDateWithin[i]["award_date"].split("/")[1];
       if(startMonth <= parseInt(monthEntry))
       {
-          var dayEntry = procedureDateWithin[i]["award_date"].split("/")[0];
-          if(startDay <= parseInt(dayEntry))
-          {
-            temp.push(procedureDateWithin[i]);
-          }
+        var dayEntry = procedureDateWithin[i]["award_date"].split("/")[0];
+        if(startDay <= parseInt(dayEntry))
+        {
+          temp.push(procedureDateWithin[i]);
+        }
       }
     }
-
     for(var i = 0; i < temp.length; i++)
     {
       var monthEntry = temp[i]["award_date"].split("/")[1];
@@ -100,14 +127,16 @@ class ProcedureData extends Component
         }
       }
     }
-    
     this.setState({procedure:withinDateRange});
   }
 
   criteriasAsSorting(e)
   {
+    console.log(e.target.id);
+    //document.getElementById("chosenCriteria").value = e.target.id;
     this.setState({sorting_criterias: e.target.id});
   }
+
 
   async sortingWay(value)
   {
@@ -118,13 +147,13 @@ class ProcedureData extends Component
   sortEntry()
   {
     var unsort = this.state.procedure;
-    console.log(this.state.sorting_criterias, this.state.sorting_way)
     if(this.state.sorting_criterias === "")
     {
-      alert("Please make sure to choose your criteria by clicking on it.");
+      alert("Please make sure to choose your criteria by clicking on it.\nChosen Criteria: None\nSorting Arrangement: Not Chosen");
     }
     else
     {
+      alert("Please make sure to choose your criteria by clicking on it.\nChosen Criteria: "+this.state.sorting_criterias+"\nSorting Arrangement: "+this.state.sorting_way);
       if(this.state.sorting_way === "ascending")
       { 
         if(this.state.sorting_criterias === "awarded_amt")
@@ -173,14 +202,22 @@ class ProcedureData extends Component
       }
     }
   }
+
   async onSelectedEntries()
   {
     try
     {
       var startEntry = parseInt(document.getElementById("start").value)-1;
       var endEntry = parseInt(document.getElementById("end").value)-1;
-      var slicedArray = this.state.procedure.slice(startEntry, endEntry);
-      this.setState({procedure:slicedArray});
+      if(startEntry < endEntry)
+      {
+        var slicedArray = this.state.procedure.slice(startEntry, endEntry);
+        this.setState({procedure:slicedArray});
+      }
+      else
+      {
+        alert("Please choose the correct range of entries you preferred.");
+      }
     }
     catch(e)
     {
@@ -208,7 +245,7 @@ class ProcedureData extends Component
   {
     try
     {
-      let res = await axios.post("http://13.215.200.30:3001/savingCustomizedData", {procedureData: this.state.procedure});
+      let res = await axios.post("http://localhost:3001/savingCustomizedData", {procedureData: this.state.procedure});
       let data = await res.data;
       console.log(data);
       window.location.reload(false);
