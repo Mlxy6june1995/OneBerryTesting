@@ -14,4 +14,4 @@ csvjson
 os
 cors
 
-Upload File will only be in backend/data folder same as Save File.
+Upload File will only be in local folder backend/data folder same as Save File.
