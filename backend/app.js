@@ -8,7 +8,6 @@ var cors = require("cors");
 
 //Routers
 var retrieveProcedureData = require('./data/retrieveProcedureData');
-//http://localhost.com:3001/savingCustomizedData
 var savingCustomizedData = require('./data/savingCustomizedData');
 
 var app = express();

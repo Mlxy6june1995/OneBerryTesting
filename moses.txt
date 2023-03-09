@@ -1,1 +1,17 @@
-Yo
+Packages Use:
+React:
+axios
+react-router v5.2.0
+react-router-dom v5.2.0
+
+Node:
+express
+csvtojson
+path
+json-2-csv
+fs
+csvjson
+os
+cors
+
+Upload File will only be in backend/data folder same as Save File.
