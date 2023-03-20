@@ -28,7 +28,7 @@ class ProcedureData extends Component
   {
     try
     {
-      let res = await axios.post("http://13.215.200.30:3001/retrieveProcedureData", {upload: file});
+      let res = await axios.post("http://localhost:3001/retrieveProcedureData", {upload: file});
       let data = await res.data;
       if(data != [])
       {
